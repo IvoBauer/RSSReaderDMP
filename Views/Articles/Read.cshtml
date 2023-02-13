@@ -1,0 +1,63 @@
+﻿@model RSSReader.ViewModel.FeedArticlesViewModel
+
+@{
+    ViewData["Title"] = "Articles";
+}
+
+<div class="container p-3">
+    <div class="row pt-4">
+        <div class="col-6">
+            @{
+                string feedName = Model.Feed.Name + " (" + Model.Articles.Count() + ")";
+            }
+            <h1>@feedName</h1>
+        </div>
+
+        <div class="col-4 text-end" style="margin-top: 1em;">
+            <form method="POST">
+                <button asp-controller="Feeds" asp-action="ReloadFeed" asp-route-id="@Model.Feed.Id" class="btn btn-primary"><i class="bi bi-arrow-clockwise"></i> Reload</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+@using (Html.BeginForm("Read", "Articles"))
+{
+    <div>
+        <div class="row" style="margin-left: 1em; margin-bottom: 1em;">
+            <div class="col-lg-3 col-sm-6">
+                <label for="startDate">Date from</label>
+                <input id="startDate" class="form-control" name="dateFrom" type="date" />
+                <span id="startDateSelected"></span>
+            </div>
+            <div class="col-lg-3 col-sm-6">
+                <label for="endDate">Date to</label>
+                <input id="endDate" class="form-control" name="dateTo" type="date" />
+                <span id="endDateSelected"></span>
+            </div>
+            <div class="col-lg-3 col-sm-6" style="margin-top: 1.5em;">
+                <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i> Filter</button>
+            </div>
+        </div>
+    </div>
+}
+<div class="container p-3">
+    <div class="row">
+        @foreach (var item in Model.Articles)
+        {
+            <div style="margin-bottom: 2em; display: inline-block;">
+                <div class="col-9" style="backround: blue">
+                    <h5>@Html.DisplayFor(modelItem => item.Title)</h5>
+                    <p>Published: @Html.DisplayFor(modelItem => item.PublishDate)</p>
+                    <p>@Html.DisplayFor(modelItem => item.Summary)</p>
+                    <p><a class="btn btn-link" href="@Html.DisplayFor(modelItem => item.Uri)"><i class="bi bi-book"></i> Read article</a> Link: <a href="@Html.DisplayFor(modelItem => item.Uri)">@Html.DisplayFor(modelItem => item.Uri)</a></p>
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+
+

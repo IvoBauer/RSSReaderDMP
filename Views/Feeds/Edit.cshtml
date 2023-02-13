@@ -1,0 +1,40 @@
+﻿@model Feed
+
+
+@{
+    ViewData["Title"] = "Edit feed";
+
+}
+
+<div class="container p-3">
+    <div class="row pt-4">
+        <div class="text-center">
+            <h1>Edit feed</h1>
+        </div>
+    </div>
+</div>
+<form asp-action="Edit">
+    <div class="row">
+        <div class="col-0 col-md-4"></div>
+        <div class="col-12 col-md-4 text-center">
+            <div class="form-floating">
+                <input class="form-control" placeholder="text" asp-for="Name">
+                <label asp-for="Name">Name:</label>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <br />
+            <div class="form-floating">
+                <input class="form-control" placeholder="text" asp-for="Uri">
+                <label asp-for="Uri">Uri:</label>
+                <span asp-validation-for="Uri" class="text-danger"></span>
+            </div>
+
+            <p style="color:red">@ViewData["Error"]</p>
+        </div>
+        <br />
+    </div>
+    <div class="text-center">
+        <button class="btn btn-primary" style="width:150px" asp-action="Index">Back</button>
+        <button type="submit" class="btn btn-success" style="width:150px">Edit feed</button>
+    </div>
+</form>
