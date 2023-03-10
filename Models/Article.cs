@@ -10,22 +10,22 @@ namespace RSSReader.Models
         public int Id { get; set; }
 
         [Required]
-        public string ArticleRssID { get; set; }
+        public string? ArticleRssID { get; set; }
 
         [Required]
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
         [Required]
-        public string Summary { get; set; }
+        public string? Summary { get; set; }
 
         [Required]
-        public string Uri { get; set; }
+        public string? Uri { get; set; }
 
         public DateTime PublishDate { get; set; }
 
         public int FeedId { get; set; }
         [ForeignKey("FeedId")]
         [ValidateNever]
-        public Feed Feed { get; set; }
+        public Feed? Feed { get; set; }
     }
 }

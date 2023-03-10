@@ -9,8 +9,8 @@ namespace RSSReader.Models
         public int Id { get; set; }
 
         [Required]
-        public string Name { get; set; }
-        public string Uri { get; set; }
+        public string? Name { get; set; }
+        public string? Uri { get; set; }
         
         [ValidateNever]
         public DateTime LastUpdate { get; set; }

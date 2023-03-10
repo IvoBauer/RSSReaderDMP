@@ -39,17 +39,21 @@ namespace RSSReader.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (newFeed.Uri == null)
+                {
+                    return View(newFeed);
+                }
                 newFeed.LastUpdate = DateTime.UtcNow.AddHours(1);
 
                 XmlReader reader;
                 SyndicationFeed feeds;
 
                 try
-                {
+                {                    
                     reader = XmlReader.Create(newFeed.Uri);
                     feeds = SyndicationFeed.Load(reader);
                 }
-                catch (Exception exc)
+                catch (Exception)
                 {
                     ViewData["Error"] = "Please enter a valid RSS link!";
                     return View(newFeed);
@@ -61,10 +65,12 @@ namespace RSSReader.Controllers
 
                 foreach (var loadedArticle in feeds.Items)
                 {
-                    Article article = new Article();
-                    article.FeedId = newFeed.Id;
-                    article.ArticleRssID = loadedArticle.Id;
-                    article.Title = loadedArticle.Title.Text;
+                    Article article = new Article
+                    {
+                        FeedId = newFeed.Id,
+                        ArticleRssID = loadedArticle.Id,
+                        Title = loadedArticle.Title.Text
+                    };
 
                     if (loadedArticle.Summary == null)
                     {
@@ -96,19 +102,21 @@ namespace RSSReader.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult ReloadFeed(int id)
         {
-            Feed feed = _context.Feeds.Find(id);
+            Feed? feed = _context.Feeds.Find(id);
 
-            if (feed != null)
+            if (feed != null && feed.Uri != null)
             {
                 XmlReader reader = reader = XmlReader.Create(feed.Uri);
                 SyndicationFeed loadedFeed = SyndicationFeed.Load(reader);
+                
+                
                 feed.LastUpdate = DateTime.UtcNow.AddHours(1);
 
                 List<Article> articlesFromDb = _context.Articles.Where(x => x.FeedId == id).ToList();
 
                 foreach (var loadedArticle in loadedFeed.Items)
                 {
-                    Article articleFromDb = articlesFromDb.Find(x => x.ArticleRssID == loadedArticle.Id);
+                    Article? articleFromDb = articlesFromDb.Find(x => x.ArticleRssID == loadedArticle.Id);
                     if (articleFromDb == null)
                     {
                         articleFromDb = new Article();
@@ -151,7 +159,7 @@ namespace RSSReader.Controllers
         // Feed EDIT
         public ActionResult Edit(int id)
         {
-            Feed feed = _context.Feeds.Find(id);
+            Feed? feed = _context.Feeds.Find(id);
             if (feed == null)
             {
                 return RedirectToAction("Index");
@@ -169,10 +177,14 @@ namespace RSSReader.Controllers
 
             try
             {
-                reader = XmlReader.Create(editedFeed.Uri);
-                feeds = SyndicationFeed.Load(reader);
+                if (editedFeed.Uri != null)
+                {
+                    reader = XmlReader.Create(editedFeed.Uri);
+                    feeds = SyndicationFeed.Load(reader);
+                }
+
             }
-            catch (Exception exc)
+            catch (Exception)
             {
                 ViewData["Error"] = "Please enter a valid RSS link!";
                 return View(editedFeed);
@@ -192,9 +204,12 @@ namespace RSSReader.Controllers
         {
             foreach (int feedId in selectedFeedsId)
             {
-                Feed feed = _context.Feeds.Find(feedId);
-                _context.Feeds.Remove(feed);
-                _context.SaveChanges();
+                Feed? feed = _context.Feeds.Find(feedId);
+                if (feed != null)
+                {
+                    _context.Feeds.Remove(feed);
+                    _context.SaveChanges();
+                }
             }
 
             return RedirectToAction("Index");

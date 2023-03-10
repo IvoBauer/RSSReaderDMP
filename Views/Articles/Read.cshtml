@@ -8,14 +8,24 @@
     <div class="row pt-4">
         <div class="col-6">
             @{
-                string feedName = Model.Feed.Name + " (" + Model.Articles.Count() + ")";
+                string feedName = "";
+                if (Model.Feed != null && Model.Articles != null)
+                {
+                    feedName = Model.Feed.Name + " (" + Model.Articles.Count() + ")";
+                }
+
+                int? feedId = null;
+                if (Model.Feed != null)
+                {
+                    feedId = Model.Feed.Id;
+                }
             }
             <h1>@feedName</h1>
         </div>
 
         <div class="col-4 text-end" style="margin-top: 1em;">
             <form method="POST">
-                <button asp-controller="Feeds" asp-action="ReloadFeed" asp-route-id="@Model.Feed.Id" class="btn btn-primary"><i class="bi bi-arrow-clockwise"></i> Reload</button>
+                <button asp-controller="Feeds" asp-action="ReloadFeed" asp-route-id="@feedId" class="btn btn-primary"><i class="bi bi-arrow-clockwise"></i> Reload</button>
             </form>
         </div>
     </div>
@@ -45,16 +55,21 @@
 }
 <div class="container p-3">
     <div class="row">
-        @foreach (var item in Model.Articles)
-        {
-            <div style="margin-bottom: 2em; display: inline-block;">
-                <div class="col-9" style="backround: blue">
-                    <h5>@Html.DisplayFor(modelItem => item.Title)</h5>
-                    <p>Published: @Html.DisplayFor(modelItem => item.PublishDate)</p>
-                    <p>@Html.DisplayFor(modelItem => item.Summary)</p>
-                    <p><a class="btn btn-link" href="@Html.DisplayFor(modelItem => item.Uri)"><i class="bi bi-book"></i> Read article</a> Link: <a href="@Html.DisplayFor(modelItem => item.Uri)">@Html.DisplayFor(modelItem => item.Uri)</a></p>
-                </div>
-            </div>
+        @{
+            if (Model.Articles != null)
+            {
+                foreach (var item in Model.Articles)
+                {
+                    <div style="margin-bottom: 2em; display: inline-block;">
+                        <div class="col-9">
+                            <h5>@Html.DisplayFor(modelItem => item.Title)</h5>
+                            <p>Published: @Html.DisplayFor(modelItem => item.PublishDate)</p>
+                            <p>@Html.DisplayFor(modelItem => item.Summary)</p>
+                            <p><a class="btn btn-link" href="@Html.DisplayFor(modelItem => item.Uri)"><i class="bi bi-book"></i> Read article</a> Link: <a href="@Html.DisplayFor(modelItem => item.Uri)">@Html.DisplayFor(modelItem => item.Uri)</a></p>
+                        </div>
+                    </div>
+                }
+            }
         }
 
     </div>
