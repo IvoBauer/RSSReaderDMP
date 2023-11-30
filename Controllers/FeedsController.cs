@@ -24,6 +24,23 @@ namespace RSSReader.Controllers
         public ActionResult Index()
         {
             IEnumerable<Feed> objFeeds = _context.Feeds.ToList();
+
+            if (objFeeds.Count() == 0)
+            {
+                Feed newFeed = new Feed();
+                newFeed.Name = "BBC NEWS";
+                newFeed.Uri = "https://feeds.bbci.co.uk/news/world/rss.xml";
+                _context.Feeds.Add(newFeed);
+                _context.SaveChanges();
+
+                newFeed.Name = "BBC NEWS";
+                newFeed.Uri = "https://feeds.bbci.co.uk/news/world/rss.xml";
+                _context.Feeds.Add(newFeed);
+                _context.SaveChanges();
+
+
+
+            }
             return View(objFeeds);
         }
 

@@ -20,6 +20,7 @@ namespace RSSReader.Controllers
             if (dateTo != null)
             {
                 dateTo = dateTo.Value.AddDays(1);
+
             }
             
             FeedArticlesViewModel feedArticlesViewModel = new FeedArticlesViewModel();
