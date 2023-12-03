@@ -23,19 +23,29 @@ namespace RSSReader.Controllers
         // Feed INDEX
         public ActionResult Index()
         {
+            IEnumerable<FeedCategory> objFeedCategories = _context.FeedCategories.ToList();
+            if (objFeedCategories.Count() == 0)
+            {
+                FeedCategory feedCategory1 = new();
+                feedCategory1.Name = "World";
+                _context.FeedCategories.Add(feedCategory1);
+                _context.SaveChanges();
+            }
+            objFeedCategories = _context.FeedCategories.ToList();
             IEnumerable<Feed> objFeeds = _context.Feeds.ToList();
-
             if (objFeeds.Count() == 0)
             {
-                Feed newFeed = new Feed();
-                newFeed.Name = "BBC NEWS";
-                newFeed.Uri = "https://feeds.bbci.co.uk/news/world/rss.xml";
-                _context.Feeds.Add(newFeed);
-                _context.SaveChanges();
+                Feed newFeed1 = new();
+                newFeed1.Name = "BBC NEWS - World";
+                newFeed1.Uri = "https://feeds.bbci.co.uk/news/world/rss.xml";
+                newFeed1.FeedCategoryId = _context.FeedCategories.First().Id;
+                _context.Feeds.Add(newFeed1);
 
-                newFeed.Name = "BBC NEWS";
-                newFeed.Uri = "https://feeds.bbci.co.uk/news/world/rss.xml";
-                _context.Feeds.Add(newFeed);
+                Feed newFeed2 = new();
+                newFeed2.Name = "The New York Times - World";
+                newFeed2.Uri = "https://rss.nytimes.com/services/xml/rss/nyt/World.xml";
+                newFeed2.FeedCategoryId = _context.FeedCategories.First().Id;
+                _context.Feeds.Add(newFeed2);
                 _context.SaveChanges();
 
 

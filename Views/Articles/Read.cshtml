@@ -66,6 +66,9 @@
                             <p>Published: @Html.DisplayFor(modelItem => item.PublishDate)</p>
                             <p>@Html.DisplayFor(modelItem => item.Summary)</p>
                             <p><a class="btn btn-link" href="@Html.DisplayFor(modelItem => item.Uri)"><i class="bi bi-book"></i> Read article</a> Link: <a href="@Html.DisplayFor(modelItem => item.Uri)">@Html.DisplayFor(modelItem => item.Uri)</a></p>
+                            <a asp-controller="FeedCategoryRecord" asp-action="Index" asp-route-id="@item.Feed.Id" target="_blank" class="btn btn-primary"><i class="bi bi-arrow-clockwise"></i> Read+</a>
+                            <p>Check out <a href="https://www.freecodecamp.org/" target="_blank">freeCodeCamp</a>.</p>
+
                         </div>
                     </div>
                 }

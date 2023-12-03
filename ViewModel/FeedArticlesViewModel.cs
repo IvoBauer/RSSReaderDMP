@@ -6,5 +6,6 @@ namespace RSSReader.ViewModel
     {
         public Feed? Feed { get; set; }
         public IEnumerable<Article>? Articles { get; set; }
+        public IEnumerable<FeedCategory>? FeedCategories { get; set; }
     }
 }
