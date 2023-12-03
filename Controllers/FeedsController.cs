@@ -38,13 +38,13 @@ namespace RSSReader.Controllers
                 Feed newFeed1 = new();
                 newFeed1.Name = "BBC NEWS - World";
                 newFeed1.Uri = "https://feeds.bbci.co.uk/news/world/rss.xml";
-                newFeed1.FeedCategoryId = _context.FeedCategories.First().Id;
+                newFeed1.FeedCategoryId = _context.FeedCategories.FirstOrDefault(e => e.Name == "World").Id;
                 _context.Feeds.Add(newFeed1);
 
                 Feed newFeed2 = new();
                 newFeed2.Name = "The New York Times - World";
                 newFeed2.Uri = "https://rss.nytimes.com/services/xml/rss/nyt/World.xml";
-                newFeed2.FeedCategoryId = _context.FeedCategories.First().Id;
+                newFeed2.FeedCategoryId = _context.FeedCategories.FirstOrDefault(e => e.Name == "World").Id;
                 _context.Feeds.Add(newFeed2);
                 _context.SaveChanges();
 
