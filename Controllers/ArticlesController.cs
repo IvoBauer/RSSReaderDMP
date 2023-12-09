@@ -39,26 +39,6 @@ namespace RSSReader.Controllers
 
             }
 
-            //IEnumerable<Article> articles;
-            //IEnumerable<Article> articles2;
-            //if (dateFrom != null && dateTo != null)
-            //{
-            //    articles = _context.Articles.Where(x => x.FeedId == id).Where(x => x.PublishDate >= dateFrom).Where(x => x.PublishDate <= dateTo);
-            //}
-            //else if (dateFrom == null && dateTo != null)
-            //{
-            //    articles = _context.Articles.Where(x => x.FeedId == id).Where(x => x.PublishDate <= dateTo);
-            //}
-            //else if (dateFrom != null && dateTo == null)
-            //{
-            //    articles = _context.Articles.Where(x => x.FeedId == id).Where(x => x.PublishDate >= dateFrom);
-            //}
-            //else
-            //{
-            //    articles = _context.Articles.Where(x => x.FeedId == id);
-            //}
-
-
             IEnumerable<Article> articles = _context.Articles.Where(x => x.FeedId == id);
             if (dateFrom != null)
             {
@@ -77,6 +57,86 @@ namespace RSSReader.Controllers
             }
 
             return View(feedArticlesViewModel);
+        }
+
+        public IActionResult Personalised()
+        {
+            FeedArticlesCategoriesViewModel feedArticlesCategoriesViewModel = new FeedArticlesCategoriesViewModel();    
+            feedArticlesCategoriesViewModel.Feeds = _context.Feeds.ToList();
+            List<FeedCategory> feedCategories = _context.FeedCategories.ToList();
+            List<FeedCategoryRecord> feedCategoriesRecord = _context.FeedCategoryRecords.ToList();
+            List<FeedCategoryRecord> feedCategoryRecordWeek = feedCategoriesRecord.Where(x => x.Date > DateTime.Now.AddDays(-7)).ToList();
+            feedArticlesCategoriesViewModel.FeedCategories = feedCategories;
+            List<Article> articles = _context.Articles.OrderByDescending(e => e.PublishDate).ToList();
+
+            double businessScore = 0;
+            int bussinessId = feedCategories.First(e => e.Name == "Business").Id;
+            double technologyScore = 0;
+            int technologyId = feedCategories.First(e => e.Name == "Technology").Id;
+            double scienceAEnviromentScore = 0;
+            int scienceAEnviromentId = feedCategories.First(e => e.Name == "Science & Environment").Id;
+            double educationAFamilyScore = 0;
+            int educationAFamilyId = feedCategories.First(e => e.Name == "Education & Family").Id;
+            double entertainmentAArtsScore = 0;
+            int entertainmentAArtsId = feedCategories.First(e => e.Name == "Entertainment & Arts").Id;
+            double healthScore = 0;
+            int healthId = feedCategories.First(e => e.Name == "Health").Id;
+            double politicsScore = 0;
+            int politicsId = feedCategories.First(e => e.Name == "Politics").Id;
+            double sportsScore = 0;
+            int sportsId = feedCategories.First(e => e.Name == "Sports").Id;
+
+            //Last week. Coefficient: 0.5
+            int readedArticlesCount = feedCategoryRecordWeek.Count();
+            businessScore += 0.5 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == bussinessId).Count() / readedArticlesCount;
+            technologyScore += 0.5 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == technologyId).Count() / readedArticlesCount;
+            scienceAEnviromentScore += 0.5 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == scienceAEnviromentId).Count() / readedArticlesCount;
+            educationAFamilyScore += 0.5 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == educationAFamilyId).Count() / readedArticlesCount;
+            entertainmentAArtsScore += 0.5 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == entertainmentAArtsId).Count() / readedArticlesCount;
+            healthScore += 0.5 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == healthScore).Count() / readedArticlesCount;
+            politicsScore += 0.5 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == politicsId).Count() / readedArticlesCount;
+            sportsScore += 0.5 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == sportsId).Count() / readedArticlesCount;
+
+            //1 to 2 weeks ago. Coefficient: 0.25
+            feedCategoryRecordWeek = feedCategoriesRecord.Where(x => x.Date > DateTime.Now.AddDays(-14) && x.Date < DateTime.Now.AddDays(-7)).ToList();
+            businessScore += 0.25 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == bussinessId).Count() / readedArticlesCount;
+            technologyScore += 0.25 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == technologyId).Count() / readedArticlesCount;
+            scienceAEnviromentScore += 0.25 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == scienceAEnviromentId).Count() / readedArticlesCount;
+            educationAFamilyScore += 0.25 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == educationAFamilyId).Count() / readedArticlesCount;
+            entertainmentAArtsScore += 0.25 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == entertainmentAArtsId).Count() / readedArticlesCount;
+            healthScore += 0.25 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == healthScore).Count() / readedArticlesCount;
+            politicsScore += 0.25 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == politicsId).Count() / readedArticlesCount;
+            sportsScore += 0.25 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == sportsId).Count() / readedArticlesCount;            
+
+            //2 to 3 weeks ago. Coefficient: 0.125
+            feedCategoryRecordWeek = feedCategoriesRecord.Where(x => x.Date > DateTime.Now.AddDays(-21) && x.Date < DateTime.Now.AddDays(-14)).ToList();
+            businessScore += 0.125 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == bussinessId).Count() / readedArticlesCount;
+            technologyScore += 0.125 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == technologyId).Count() / readedArticlesCount;
+            scienceAEnviromentScore += 0.125 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == scienceAEnviromentId).Count() / readedArticlesCount;
+            educationAFamilyScore += 0.125 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == educationAFamilyId).Count() / readedArticlesCount;
+            entertainmentAArtsScore += 0.125 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == entertainmentAArtsId).Count() / readedArticlesCount;
+            healthScore += 0.125 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == healthScore).Count() / readedArticlesCount;
+            politicsScore += 0.125 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == politicsId).Count() / readedArticlesCount;
+            sportsScore += 0.125 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == sportsId).Count() / readedArticlesCount;
+
+            //Older than 3 weeks. Coefficient: 0.125
+            feedCategoryRecordWeek = feedCategoriesRecord.Where(x => x.Date < DateTime.Now.AddDays(-21)).ToList();
+            businessScore += 0.125 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == bussinessId).Count() / readedArticlesCount;
+            technologyScore += 0.125 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == technologyId).Count() / readedArticlesCount;
+            scienceAEnviromentScore += 0.125 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == scienceAEnviromentId).Count() / readedArticlesCount;
+            educationAFamilyScore += 0.125 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == educationAFamilyId).Count() / readedArticlesCount;
+            entertainmentAArtsScore += 0.125 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == entertainmentAArtsId).Count() / readedArticlesCount;
+            healthScore += 0.125 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == healthScore).Count() / readedArticlesCount;
+            politicsScore += 0.125 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == politicsId).Count() / readedArticlesCount;
+            sportsScore += 0.125 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == sportsId).Count() / readedArticlesCount;                                                                    
+            
+            List<Article> selectedArticles = new List<Article>();
+            selectedArticles.AddRange(articles.Where(e => e.Feed.FeedCategoryId == bussinessId).Take((int)((businessScore) * 100)).ToList());
+
+            feedArticlesCategoriesViewModel.Articles = _context.Articles.OrderByDescending(e => e.PublishDate).ToList();
+            
+            
+            return View(feedArticlesCategoriesViewModel);
         }
     }
 }

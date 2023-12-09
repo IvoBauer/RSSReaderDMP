@@ -6,11 +6,14 @@
 
 <div class="container p-3">
     <div class="row pt-4">
-        <div class="col-6">
-            <h1>Subscribed feeds</h1>
+        <div class="col-5">
+            <h1 style="margin-left: -20px;">Subscribed feeds</h1>
         </div>
 
-        <div class="col-6 text-end">
+        <div class="col-7 text-end">
+            <form method="POST" style="display: inline-block;">
+                <button asp-controller="Feeds" asp-action="ReloadAllFeeds" class="btn btn-primary"><i class="bi bi-bootstrap-reboot"></i> Reload Feeds</button>
+            </form>            
             <button type="button" id="btnManage" onclick="changeVisibility()" class="btn btn-primary"> <i class="bi bi-pencil"></i> Manage</button>
             <a asp-controller="Feeds" asp-action="Create" class="btn btn-success"><i class="bi bi-plus-circle"></i> Add Feed</a>
         </div>
@@ -19,54 +22,53 @@
 
 @using (Html.BeginForm("DeleteSelectedFeeds", "Feeds"))
 {
-    <table class="table table-hover">
+
+    List<FeedCategory> feedCategories = new List<FeedCategory>();
+    var uniqueFeedsCategories = Model.DistinctBy(e => e.FeedCategoryId);
+
+
+    @foreach (var category in uniqueFeedsCategories)
+    {
+        var feeds = Model.Where(e => e.FeedCategoryId == category.FeedCategoryId);
+        <h2>@category.FeedCategory.Name</h2>
+
+        foreach (var feed in feeds)
+        {
+                <table class="table table-hover">
         <thead>
-            <tr>
-                <th>Feed name</th>
-                <th>Last updated</th>
-                <th></th>
-            </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td style="width: 30%">
-                        @Html.DisplayFor(modelItem => item.Name)
-                    </td>
-                    <td style="width: 20%">
-                        @Html.DisplayFor(modelItem => item.LastUpdate)
-                    </td>
-                    <td>
-                        @{
-                            string divCheckbox = "divCheckbox" + item.Id;
-                            string checkboxDelete = "checkboxDelete" + item.Id;
-                            string btnEdit = "btnEdit" + item.Id;
-                            string btnRead = "btnRead" + item.Id;
-                        }
-
-                        <a type="button" id="@btnEdit" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary" style="display: None;"> <i class="bi bi-pencil"></i> Edit</a>
-                        <a type="button" id="@btnRead" asp-controller="Articles" asp-action="Read" asp-route-id="@item.Id" class="btn btn-primary" style="display: inline-block;"> <i class="bi bi-book"></i> Read feed</a>
-                        <div class="form-check" style="display: none; padding-left: 3em;" id="@divCheckbox">
-                            <input class="form-check-input" type="checkbox" name="selectedFeedsId" id="@checkboxDelete" value="@item.Id">
-
-                            <label class="form-check-label" for="flexcheckdefault">
-                                delete
-                            </label>
-                        </div>
-                    </td>
-                </tr>
-            }
             <tr>
-                <td></td>
-                <td></td>
+                <td style="width: 30%">
+                    @Html.DisplayFor(modelItem => feed.Name)
+                </td>
+                <td style="width: 25%">
+                    @Html.DisplayFor(modelItem => feed.LastUpdate)
+                </td>
                 <td>
-                    <button type="button" id="selectAllCheckboxes" style="display: none;" onclick="asddasasdadsadsads()" class="btn btn-primary">Select all</button>
-                    <button class="btn btn-danger" id="btnDeleteSelectedFeeds" type="submit" style="display: none;">Delete feeds</button>
+                    @{
+                        string divCheckbox = "divCheckbox" + feed.Id;
+                        string checkboxDelete = "checkboxDelete" + feed.Id;
+                        string btnEdit = "btnEdit" + feed.Id;
+                        string btnRead = "btnRead" + feed.Id;
+                    }
+
+                    <a type="button" id="@btnEdit" asp-action="Edit" asp-route-id="@feed.Id" class="btn btn-primary" style="display: None;"> <i class="bi bi-pencil"></i> Edit</a>
+                    <a type="button" id="@btnRead" asp-controller="Articles" asp-action="Read" asp-route-id="@feed.Id" class="btn btn-primary" style="display: inline-block;"> <i class="bi bi-book"></i> Read feed</a>
+                    <div class="form-check" style="display: none; padding-left: 3em;" id="@divCheckbox">
+                        <input class="form-check-input" type="checkbox" name="selectedFeedsId" id="@checkboxDelete" value="@feed.Id">
+
+                        <label class="form-check-label" for="flexcheckdefault">
+                            delete
+                        </label>
+                    </div>
                 </td>
             </tr>
-        </tbody>
-    </table>
+                </tbody>
+            </table>            
+        }
+        <br>
+    }
 }
 
 <script>

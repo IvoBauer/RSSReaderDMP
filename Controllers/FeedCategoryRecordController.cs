@@ -13,14 +13,16 @@ namespace RSSReader.Controllers
         }
         public IActionResult Index(int id)
         {
-            FeedCategoryRecord feedCategoryRecord = new FeedCategoryRecord();
-            int feedCategoryId = _context.Feeds.Where(x => x.Id == id).First().FeedCategoryId;
+            Article article = _context.Articles.Where(e => e.Id == id).First();
+            int feedCategoryId = _context.Feeds.Where(x => x.Id == article.FeedId).First().FeedCategoryId;
+
+            FeedCategoryRecord feedCategoryRecord = new FeedCategoryRecord();            
             feedCategoryRecord.FeedCategory = _context.FeedCategories.Where(x => x.Id == feedCategoryId).First();
             feedCategoryRecord.Date = DateTime.Now;
             _context.FeedCategoryRecords.Add(feedCategoryRecord);
             _context.SaveChanges();
 
-            return Redirect("https://stackoverflow.com/questions/52308563/redirect-to-url-in-asp-net-core");
+            return Redirect(article.ArticleRssID);
         }
     }
 }
