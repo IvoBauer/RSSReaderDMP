@@ -93,7 +93,7 @@ namespace RSSReader.Controllers
             scienceAEnviromentScore += 0.5 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == scienceAEnviromentId).Count() / readedArticlesCount;
             educationAFamilyScore += 0.5 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == educationAFamilyId).Count() / readedArticlesCount;
             entertainmentAArtsScore += 0.5 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == entertainmentAArtsId).Count() / readedArticlesCount;
-            healthScore += 0.5 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == healthScore).Count() / readedArticlesCount;
+            healthScore += 0.5 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == healthId).Count() / readedArticlesCount;
             politicsScore += 0.5 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == politicsId).Count() / readedArticlesCount;
             sportsScore += 0.5 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == sportsId).Count() / readedArticlesCount;
 
@@ -104,7 +104,7 @@ namespace RSSReader.Controllers
             scienceAEnviromentScore += 0.25 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == scienceAEnviromentId).Count() / readedArticlesCount;
             educationAFamilyScore += 0.25 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == educationAFamilyId).Count() / readedArticlesCount;
             entertainmentAArtsScore += 0.25 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == entertainmentAArtsId).Count() / readedArticlesCount;
-            healthScore += 0.25 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == healthScore).Count() / readedArticlesCount;
+            healthScore += 0.25 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == healthId).Count() / readedArticlesCount;
             politicsScore += 0.25 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == politicsId).Count() / readedArticlesCount;
             sportsScore += 0.25 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == sportsId).Count() / readedArticlesCount;            
 
@@ -115,7 +115,7 @@ namespace RSSReader.Controllers
             scienceAEnviromentScore += 0.125 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == scienceAEnviromentId).Count() / readedArticlesCount;
             educationAFamilyScore += 0.125 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == educationAFamilyId).Count() / readedArticlesCount;
             entertainmentAArtsScore += 0.125 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == entertainmentAArtsId).Count() / readedArticlesCount;
-            healthScore += 0.125 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == healthScore).Count() / readedArticlesCount;
+            healthScore += 0.125 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == healthId).Count() / readedArticlesCount;
             politicsScore += 0.125 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == politicsId).Count() / readedArticlesCount;
             sportsScore += 0.125 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == sportsId).Count() / readedArticlesCount;
 
@@ -126,16 +126,36 @@ namespace RSSReader.Controllers
             scienceAEnviromentScore += 0.125 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == scienceAEnviromentId).Count() / readedArticlesCount;
             educationAFamilyScore += 0.125 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == educationAFamilyId).Count() / readedArticlesCount;
             entertainmentAArtsScore += 0.125 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == entertainmentAArtsId).Count() / readedArticlesCount;
-            healthScore += 0.125 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == healthScore).Count() / readedArticlesCount;
+            healthScore += 0.125 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == healthId).Count() / readedArticlesCount;
             politicsScore += 0.125 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == politicsId).Count() / readedArticlesCount;
-            sportsScore += 0.125 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == sportsId).Count() / readedArticlesCount;                                                                    
-            
-            List<Article> selectedArticles = new List<Article>();
-            selectedArticles.AddRange(articles.Where(e => e.Feed.FeedCategoryId == bussinessId).Take((int)((businessScore) * 100)).ToList());
+            sportsScore += 0.125 * feedCategoryRecordWeek.Where(x => x.FeedCategoryId == sportsId).Count() / readedArticlesCount;
+            double sumOfScore = 0;
+            sumOfScore = businessScore + technologyScore + scienceAEnviromentScore + educationAFamilyScore + entertainmentAArtsScore + healthScore + politicsScore + sportsScore;
 
-            feedArticlesCategoriesViewModel.Articles = _context.Articles.OrderByDescending(e => e.PublishDate).ToList();
-            
-            
+            if (sumOfScore == 0 || Double.IsNaN(sumOfScore))
+            {
+                businessScore = 1 / 8.0;
+                technologyScore = 1 / 8.0;
+                scienceAEnviromentScore = 1 / 8.0;
+                educationAFamilyScore = 1 / 8.0;
+                entertainmentAArtsScore = 1 / 8.0;
+                healthScore = 1 / 8.0;
+                politicsScore = 1 / 8.0;
+                sportsScore = 1 / 8.0;
+                sumOfScore = 1.0;
+            }
+            List<Article> selectedArticles = new List<Article>();
+            selectedArticles.AddRange(articles.Where(e => e.Feed.FeedCategoryId == bussinessId).Take((int)((businessScore / sumOfScore) * 60) + 5).ToList());
+            selectedArticles.AddRange(articles.Where(e => e.Feed.FeedCategoryId == technologyId).Take((int)((technologyScore / sumOfScore) * 60) + 5).ToList());
+            selectedArticles.AddRange(articles.Where(e => e.Feed.FeedCategoryId == scienceAEnviromentId).Take((int)((scienceAEnviromentScore / sumOfScore) * 60) + 5).ToList());
+            selectedArticles.AddRange(articles.Where(e => e.Feed.FeedCategoryId == educationAFamilyId).Take((int)((educationAFamilyScore / sumOfScore) * 60) + 5).ToList());
+            selectedArticles.AddRange(articles.Where(e => e.Feed.FeedCategoryId == entertainmentAArtsId).Take((int)((entertainmentAArtsScore / sumOfScore) * 60) + 5).ToList());
+            selectedArticles.AddRange(articles.Where(e => e.Feed.FeedCategoryId == healthId).Take((int)((healthScore / sumOfScore) * 60) + 6).ToList());
+            selectedArticles.AddRange(articles.Where(e => e.Feed.FeedCategoryId == politicsId).Take((int)((politicsScore / sumOfScore) * 60) + 6).ToList());
+            selectedArticles.AddRange(articles.Where(e => e.Feed.FeedCategoryId == sportsId).Take((int)((sportsScore / sumOfScore) * 60) + 5).ToList());
+
+            Random random = new Random();
+            feedArticlesCategoriesViewModel.Articles = selectedArticles.OrderBy((x => random.Next()));
             return View(feedArticlesCategoriesViewModel);
         }
     }

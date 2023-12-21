@@ -6,7 +6,7 @@
 
 <div class="container p-3">
     <div class="row pt-4">
-        <div class="col-6">
+        <div class="col-8">
             <h1>Personalised Articles</h1>
         </div>
 
@@ -18,12 +18,12 @@
     </div>
 </div>
 
-@foreach (var item in Model.FeedCategories)
+@* @foreach (var item in Model.FeedCategories)
 {
     int number = Model.Articles.Where(e => e.Feed.FeedCategoryId == item.Id).Count();
     <p>@item.Name : @number</p>
 }
-
+ *@
 <div class="container p-3">
     <div class="row">
         @{
